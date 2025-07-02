@@ -55,7 +55,7 @@ class PrometheusMetricsPlugin {
   async getMetrics() {
     const metrics = [];
 
-    if (this.node.has['walletdb']) {
+    if (this.node.has('walletdb')) {
       const { wdb } = this.node.get('walletdb');
       const wallets = await wdb.getWallets();
 
