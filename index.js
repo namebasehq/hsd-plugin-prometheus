@@ -9,6 +9,7 @@ class PrometheusMetricsPlugin {
     this.metrics = {};
     this.server = null;
     this.port = node.config.uint('prometheus-metrics-port', 9090);
+    this.host = node.config.str('prometheus-metrics-host', '0.0.0.0');
 
     this.init();
   }
@@ -31,9 +32,10 @@ class PrometheusMetricsPlugin {
 
   async open() {
     return new Promise((resolve) => {
-      this.server.listen(this.port, () => {
+      this.server.listen(this.port, this.host, () => {
         this.node.logger.info(
-          'Prometheus metrics server listening on port %d',
+          'Prometheus metrics server listening on port %s:%d',
+          this.host,
           this.port
         );
         resolve();
