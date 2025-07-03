@@ -47,19 +47,23 @@ plugins: hsd-plugin-prometheus
 
 ## Configuration
 
-The plugin listens on port `9090` by default. You can change this port by adding the `prometheus-metrics-port` option to your `hsd.conf` file or as a command-line argument:
+The plugin listens on port `9090` by default. You can change this port by adding the `prometheus-port` option to your `hsd.conf` file or as a command-line argument:
 
 ### `hsd.conf`
 
 ```
-prometheus-metrics-port: 9091
+prometheus-port: 9091
+prometheus-host: 127.0.0.1
+prometheus-api-key: your-secret-key
 ```
 
 ### Command Line
 
 ```bash
-hsd --plugins /path/to/hsd-plugin-prometheus --prometheus-metrics-port 9091
+hsd --plugins /path/to/hsd-plugin-prometheus --prometheus-port 9091 --prometheus-host 127.0.0.1 --prometheus-api-key your-secret-key
 ```
+
+When the `prometheus-api-key` is set, the metrics endpoint will require Basic Authentication. The username must be `x`, and the password must be the configured API key.
 
 ## Exposed Metrics
 

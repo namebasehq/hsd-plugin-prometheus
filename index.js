@@ -8,14 +8,34 @@ class PrometheusMetricsPlugin {
     this.node = node;
     this.metrics = {};
     this.server = null;
-    this.port = node.config.uint('prometheus-metrics-port', 9090);
-    this.host = node.config.str('prometheus-metrics-host', '0.0.0.0');
+    this.port = node.config.uint('prometheus-port', 9090);
+    this.host = node.config.str('prometheus-host', '0.0.0.0');
+    this.apiKey = node.config.str('prometheus-api-key');
 
     this.init();
   }
 
   init() {
     this.server = http.createServer((req, res) => {
+      if (this.apiKey) {
+        const auth = req.headers.authorization;
+        if (!auth || !auth.startsWith('Basic ')) {
+          res.writeHead(401, { 'WWW-Authenticate': 'Basic realm="Metrics"' });
+          return res.end('Unauthorized');
+        }
+
+        const credentials = Buffer.from(
+          auth.substring(6),
+          'base64'
+        ).toString();
+        const [username, password] = credentials.split(':');
+
+        if (username !== 'x' || password !== this.apiKey) {
+          res.writeHead(403);
+          return res.end('Forbidden');
+        }
+      }
+
       if (req.url === '/metrics') {
         res.writeHead(200, { 'Content-Type': 'text/plain' });
         this.getMetrics().then((metrics) => res.end(metrics));
