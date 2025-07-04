@@ -24,10 +24,7 @@ class PrometheusMetricsPlugin {
           return res.end('Unauthorized');
         }
 
-        const credentials = Buffer.from(
-          auth.substring(6),
-          'base64'
-        ).toString();
+        const credentials = Buffer.from(auth.substring(6), 'base64').toString();
         const [username, password] = credentials.split(':');
 
         if (username !== 'x' || password !== this.apiKey) {
@@ -82,9 +79,10 @@ class PrometheusMetricsPlugin {
       for (const walletName of wallets) {
         const wallet = await wdb.get(walletName);
         const accounts = await wallet.getAccounts();
+        const safeName = walletName.replace('-', '_');
 
         metrics.push({
-          name: `hsd_wallet_${walletName}_accounts`,
+          name: `hsd_wallet_${safeName}_accounts`,
           help: `Number of wallets loaded in the hsd node.`,
           type: 'gauge',
           value: accounts.length,
@@ -94,42 +92,42 @@ class PrometheusMetricsPlugin {
           const balance = await wallet.getBalance(account);
 
           metrics.push({
-            name: `hsd_wallet_${walletName}_${balance.account}_tx`,
+            name: `hsd_wallet_${safeName}_${balance.account}_tx`,
             help: `Number of transactions in the wallet account ${account}.`,
             type: 'counter',
             value: balance.tx,
           });
 
           metrics.push({
-            name: `hsd_wallet_${walletName}_${balance.account}_coin`,
+            name: `hsd_wallet_${safeName}_${balance.account}_coin`,
             help: `Number of coins in the wallet account ${account}.`,
             type: 'gauge',
             value: balance.coin,
           });
 
           metrics.push({
-            name: `hsd_wallet_${walletName}_${balance.account}_unconfirmed`,
+            name: `hsd_wallet_${safeName}_${balance.account}_unconfirmed`,
             help: `Number of unconfirmed transactions in the wallet account ${account}.`,
             type: 'gauge',
             value: balance.unconfirmed,
           });
 
           metrics.push({
-            name: `hsd_wallet_${walletName}_${balance.account}_confirmed`,
+            name: `hsd_wallet_${safeName}_${balance.account}_confirmed`,
             help: `Number of confirmed transactions in the wallet account ${account}.`,
             type: 'gauge',
             value: balance.confirmed,
           });
 
           metrics.push({
-            name: `hsd_wallet_${walletName}_${balance.account}_locked_unconfirmed`,
+            name: `hsd_wallet_${safeName}_${balance.account}_locked_unconfirmed`,
             help: `Number of locked_unconfirmed transactions in the wallet account ${account}.`,
             type: 'gauge',
             value: balance.ulocked,
           });
 
           metrics.push({
-            name: `hsd_wallet_${walletName}_${balance.account}_locked_confirmed`,
+            name: `hsd_wallet_${safeName}_${balance.account}_locked_confirmed`,
             help: `Number of locked_confirmed transactions in the wallet account ${account}.`,
             type: 'gauge',
             value: balance.clocked,
